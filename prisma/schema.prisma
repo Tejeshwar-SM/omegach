@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Room {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+  maxUsers  Int      @default(2)
+
+  //
+  participants User[]
+  messages     Message[]
+  canvasState  Json?
+
+  @@map("rooms")
+}
+
+model User {
+  id       String   @id @default(cuid())
+  socketId String   @unique
+  roomId   String?  @default("Anonymous")
+  joinedAt DateTime @default(now())
+  isActive Boolean  @default(true)
+
+  room     Room?     @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  messages Message[]
+
+  @@map("users")
+}
+
+model Message {
+  id        String      @id @default(cuid())
+  content   String
+  type      MessageType @default(TEXT)
+  createdAt DateTime    @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+enum MessageType {
+  TEXT
+  SYSTEM
+  EMOJI
+}
