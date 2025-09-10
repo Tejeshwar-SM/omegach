@@ -10,11 +10,11 @@ export interface ServerToClientEvents {
 
   webrtc_offer: (data: {
     offer: RTCSessionDescriptionInit;
-    from: stirng;
+    from: string;
   }) => void;
 
   webtrc_answer: (data: {
-    answere: RTCSessionDescriptionInit;
+    answer: RTCSessionDescriptionInit;
     from: string;
   }) => void;
 
@@ -49,7 +49,7 @@ export interface ClientToServerEvents {
     to: string;
   }) => void;
 
-  webtrc_ice_candidate: (data: {
+  webrtc_ice_candidate: (data: {
     candidate: RTCIceCandidate;
     to: string;
   }) => void;
